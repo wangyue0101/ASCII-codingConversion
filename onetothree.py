@@ -5,6 +5,7 @@ import re
 
 from metaStr import meta
 
+
 Etype = {
     "hex": 0,
     "dec": 1,
@@ -34,8 +35,8 @@ def get_decode_str(target, dtype):
                 index = hex_values.index(target[position:position+3])
                 position += 3
         else:
-            if target[position:position+2] in hex_values:
-                index = hex_values.index(target[position:position+2])
+            if target[position:position+2].upper() in hex_values:
+                index = hex_values.index(target[position:position+2].upper())
                 position += 2
 
         yield keys[index]
@@ -79,6 +80,8 @@ def main(e, d, t):
             result = ("&#x"+i+";" for i in get_encode_str(t, Etype["hex"]))
         elif e == "url":                # URL ENCODE
             result = ("%"+i for i in get_encode_str(t, Etype["hex"]))
+
+        # TODO JS编码
     if d:
         if d == "de_hex":               # 十六进制解码
             result = (i for i in get_decode_str(t, Etype["hex"]))
@@ -92,8 +95,9 @@ def main(e, d, t):
             result = (i for i in get_decode_str(t, Etype["dec"]))
         elif d == "de_url":             # URL解码
             t = "".join(re.split(r"[%]", t))
-            print(t)
             result = (i for i in get_decode_str(t, Etype["hex"]))
+
+        # TODO JS解码
 
     print("".join(list(result)))
 
