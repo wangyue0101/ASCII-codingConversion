@@ -25,21 +25,21 @@ def get_encode_str(t, e_type):
 
 
 def get_decode_str(target, dtype):
-    keys = [_ for _ in list(meta.keys())]
-    hex_values = [i[dtype] for i in list(meta.values())]
+    keys_list = [_ for _ in list(meta.keys())]
+    values_list = [i[dtype] for i in list(meta.values())]
     position = 0
 
     while position < len(target):
         if target[position] == "1":
-            if target[position:position+3] in hex_values:
-                index = hex_values.index(target[position:position+3])
+            if target[position:position+3] in values_list:
+                index = values_list.index(target[position:position+3])
                 position += 3
         else:
-            if target[position:position+2].upper() in hex_values:
-                index = hex_values.index(target[position:position+2].upper())
+            if target[position:position+2].upper() in values_list:
+                index = values_list.index(target[position:position+2].upper())
                 position += 2
 
-        yield keys[index]
+        yield keys_list[index]
 
 
 @click.command()
@@ -56,18 +56,13 @@ def main(e, d, t):
     if not t:
         print("请使用 \"python onetothree.py --help\" 查看使用说明")
         sys.exit()
+
+    result = ""
     if e:
         if e not in ALLOWABLE_ENCODE_TYPE:
             print("请使用 \"python onetothree.py --help\" 查看使用说明")
             sys.exit()
-    if d:
-        if d not in ALLOWABLE_DECODE_TYPE:
-            print("请使用 \"python onetothree.py --help\" 查看使用说明")
-            sys.exit()
 
-    result = ""
-
-    if e:
         if e == "dec":                  # 十进制编码
             result = (i for i in get_encode_str(t, Etype["dec"]))
         elif e == "oct":                # 八进制编码
@@ -82,7 +77,12 @@ def main(e, d, t):
             result = ("%"+i for i in get_encode_str(t, Etype["hex"]))
 
         # TODO JS编码
+
     if d:
+        if d not in ALLOWABLE_DECODE_TYPE:
+            print("请使用 \"python onetothree.py --help\" 查看使用说明")
+            sys.exit()
+
         if d == "de_hex":               # 十六进制解码
             result = (i for i in get_decode_str(t, Etype["hex"]))
         elif d == "de_html_hex":        # HTML十六进制解码
